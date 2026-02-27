@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tes Tertulis — Programmer RSU Aisyiyah Muntilan</title>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=JetBrains+Mono:wght@400;600&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f9f7f4;
+    --surface: #ffffff;
+    --border: #e2ddd8;
+    --border-strong: #c8c2bb;
+    --text: #2c2825;
+    --muted: #8a8178;
+    --accent: #2d6a4f;
+    --accent-light: #e8f4ee;
+    --code-bg: #f4f1ed;
+    --code-border: #ddd9d3;
+    --h-color: #1a1714;
+    --link: #2d6a4f;
+    --hr: #ddd9d3;
+    --option-hover: #f0f7f3;
+    --option-selected: #e8f4ee;
+    --option-selected-border: #2d6a4f;
+    --essay-bg: #fdfcfb;
+    --tag-bg: #eef6f2;
+    --tag-text: #1e5c40;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Lato', sans-serif;
+    font-size: 16px;
+    line-height: 1.8;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* LAYOUT */
+  .page {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 48px 32px 80px;
+  }
+
+  /* HEADER */
+  .doc-header {
+    border-bottom: 2px solid var(--border-strong);
+    padding-bottom: 28px;
+    margin-bottom: 40px;
+  }
+  .doc-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .doc-meta span::before { content: '# '; color: var(--accent); }
+  .doc-title {
+    font-family: 'Merriweather', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--h-color);
+    line-height: 1.25;
+    margin-bottom: 10px;
+  }
+  .doc-subtitle {
+    font-size: 0.92rem;
+    color: var(--muted);
+  }
+  .doc-stats {
+    display: flex;
+    gap: 0;
+    margin-top: 20px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    width: fit-content;
+  }
+  .stat {
+    padding: 8px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    border-right: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .stat:last-child { border-right: none; }
+  .stat strong { color: var(--accent); }
+
+  /* SECTION HEADING — like ## in markdown */
+  .md-h2 {
+    font-family: 'Merriweather', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--h-color);
+    margin: 52px 0 28px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-strong);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .md-h2 .hash {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent);
+    font-size: 1rem;
+    font-weight: 400;
+  }
+
+  /* QUESTION BLOCK — like ### in markdown */
+  .q-block {
+    margin-bottom: 40px;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.45s ease, transform 0.45s ease;
+  }
+  .q-block.visible { opacity: 1; transform: translateY(0); }
+
+  .md-h3 {
+    font-family: 'Merriweather', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--h-color);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .md-h3 .hash {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--muted);
+    font-size: 0.82rem;
+    font-weight: 400;
+  }
+  .q-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--tag-text);
+    background: var(--tag-bg);
+    border: 1px solid #c3e0d1;
+    border-radius: 4px;
+    padding: 2px 8px;
+    margin-left: auto;
+    letter-spacing: 0.05em;
+  }
+
+  /* PARAGRAPH */
+  .q-body {
+    font-size: 0.95rem;
+    color: var(--text);
+    margin-bottom: 16px;
+    white-space: pre-line;
+    line-height: 1.85;
+  }
+  .q-body strong { color: var(--h-color); font-weight: 700; }
+  .q-body em { color: var(--muted); }
+
+  /* INLINE CODE */
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82em;
+    background: var(--code-bg);
+    border: 1px solid var(--code-border);
+    border-radius: 3px;
+    padding: 1px 6px;
+    color: #c0392b;
+  }
+
+  /* CODE BLOCK */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--code-border);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    padding: 14px 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    line-height: 1.7;
+    color: #3a3530;
+    white-space: pre;
+    overflow-x: auto;
+    margin-bottom: 16px;
+  }
+
+  /* BLOCKQUOTE — used for option labels like A. B. C. D. */
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    background: var(--surface);
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .option:hover { background: var(--option-hover); border-color: #aad4be; }
+  .option.selected { background: var(--option-selected); border-color: var(--option-selected-border); }
+  .opt-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--accent);
+    min-width: 22px;
+    padding-top: 2px;
+  }
+  .opt-text {
+    font-size: 0.88rem;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text);
+    white-space: pre-wrap;
+    word-break: break-word;
+    line-height: 1.65;
+  }
+
+  /* HR */
+  .md-hr {
+    border: none;
+    border-top: 1px solid var(--hr);
+    margin: 36px 0;
+  }
+
+  /* ESSAY */
+  .essay-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-bottom: 8px;
+    letter-spacing: 0.05em;
+  }
+  .essay-label::before { content: '> '; color: var(--accent); }
+  .essay-box {
+    width: 100%;
+    min-height: 130px;
+    background: var(--essay-bg);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--border-strong);
+    border-radius: 4px;
+    padding: 12px 14px;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.9rem;
+    color: var(--text);
+    resize: vertical;
+    outline: none;
+    transition: border-left-color 0.2s;
+    -webkit-user-select: text;
+    user-select: text;
+    line-height: 1.7;
+  }
+  .essay-box:focus { border-left-color: var(--accent); }
+  .essay-box::placeholder { color: #bbb5ae; }
+
+  /* FOOTER */
+  .doc-footer {
+    border-top: 2px solid var(--border-strong);
+    padding-top: 24px;
+    margin-top: 60px;
+    text-align: center;
+  }
+  .doc-footer p {
+    font-family: 'Merriweather', serif;
+    font-size: 0.95rem;
+    color: var(--muted);
+    font-style: italic;
+  }
+  .doc-footer .closing {
+    font-size: 1.1rem;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 4px;
+    font-style: normal;
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+
+  @media (max-width: 600px) {
+    .page { padding: 28px 18px 60px; }
+    .doc-title { font-size: 1.5rem; }
+    .doc-stats { flex-direction: column; width: 100%; }
+    .stat { border-right: none; border-bottom: 1px solid var(--border); }
+    .stat:last-child { border-bottom: none; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="doc-header">
+    <div class="doc-meta">
+      <span>RSU Aisyiyah Muntilan</span>
+      <span>Seleksi Kompetensi Teknis</span>
+    </div>
+    <div class="doc-title">Tes Tertulis Programmer</div>
+    <div class="doc-subtitle">Bacalah setiap soal dengan cermat sebelum menjawab.</div>
+    <div class="doc-stats">
+      <div class="stat"><strong>15</strong> Pilihan Ganda</div>
+      <div class="stat"><strong>5</strong> Essay</div>
+      <div class="stat"><strong>20</strong> Total Soal</div>
+    </div>
+  </div>
+
+  <!-- SECTION I -->
+  <div class="md-h2"><span class="hash">##</span> Bagian I — Pilihan Ganda</div>
+
+  <!-- Q1 -->
+  <div class="q-block">
+    <div class="md-h3"><span class="hash">###</span> Nomor 1 <span class="q-tag">Logika Pemrograman</span></div>
+    <div class="q-body">Jika variabel <strong>k = 10</strong>, dalam sebuah perulangan dibuat kondisi:
+— Jika <strong>k = 11</strong> → operasi <strong>k = k + 1</strong>
+— Jika tidak → operasi <strong>k = k + 2</strong>
+
+Perulangan dilakukan selama <strong>6 kali</strong>. Berapakah nilai k di akhir perulangan?</div>
+    <div class="options">
+      <div class="option" onclick="pick(this)"><span class="opt-label">A.</span><span class="opt-text">19</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">B.</span><span class="opt-text">20</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">C.</span><span class="opt-text">21</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">D.</span><span class="opt-text">22</span></div>
+    </div>
+  </div>
+  <hr class="md-hr">
+
+  <!-- Q2 -->
+  <div class="q-block">
+    <div class="md-h3"><span class="hash">###</span> Nomor 2 <span class="q-tag">Pseudocode</span></div>
+    <div class="q-body">Diketahui biaya rawat jalan:
+• Biaya konsultasi dokter = Rp 150.000
+• Biaya obat-obatan = Rp 100.000
+• Biaya pemeriksaan medis = Rp 200.000
+• Status pasien: memiliki kartu asuransi (diskon <strong>20%</strong>)
+
+Pseudocode yang tepat untuk menghitung total biaya?</div>
+    <div class="options">
+      <div class="option" onclick="pick(this)"><span class="opt-label">A.</span><span class="opt-text">total = biaya_konsultasi + biaya_obat + biaya_pemeriksaan
+IF status_asuransi = "ada" THEN
+  total = total - (total * 0.10)
+END IF</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">B.</span><span class="opt-text">total = biaya_konsultasi + biaya_obat + biaya_pemeriksaan
+IF status_asuransi = "ada" THEN
+  total = total * 0.80
+END IF</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">C.</span><span class="opt-text">total = biaya_konsultasi + biaya_obat + biaya_pemeriksaan
+IF status_asuransi = "ada" THEN
+  total = total * 1.20
+END IF</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">D.</span><span class="opt-text">total = biaya_konsultasi + biaya_obat + biaya_pemeriksaan
+IF status_asuransi = "tidak ada" THEN
+  total = total
+END IF</span></div>
+    </div>
+  </div>
+  <hr class="md-hr">
+
+  <!-- Q3 -->
+  <div class="q-block">
+    <div class="md-h3"><span class="hash">###</span> Nomor 3 <span class="q-tag">Operator Unary</span></div>
+    <div class="q-body">Sebuah ekspresi sebagai berikut:</div>
+    <div class="code-block">hasil = a++;</div>
+    <div class="q-body">Makna dari ekspresi pada operator unary di atas adalah…</div>
+    <div class="options">
+      <div class="option" onclick="pick(this)"><span class="opt-label">A.</span><span class="opt-text">Variabel a digunakan dulu baru kemudian ditambah 1</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">B.</span><span class="opt-text">Variabel a ditambah dulu dengan 1 baru kemudian digunakan</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">C.</span><span class="opt-text">Variabel a dikurangi dulu dengan 1 baru kemudian digunakan</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">D.</span><span class="opt-text">Variabel a digunakan dulu baru kemudian dikurangi 1</span></div>
+    </div>
+  </div>
+  <hr class="md-hr">
+
+  <!-- Q4 -->
+  <div class="q-block">
+    <div class="md-h3"><span class="hash">###</span> Nomor 4 <span class="q-tag">Logika & Operator</span></div>
+    <div class="q-body">Perhatikan kode berikut:</div>
+    <div class="code-block">kondisi = !true;
+if (kondisi == true) {
+    kondisi = false;
+    a = 1;
+    a = ++a;
+} else {
+    kondisi = true;
+    a = 2;
+    a = a++;
+    a = 5;
+}</div>
+    <div class="q-body">Nilai a adalah…</div>
+    <div class="options">
+      <div class="option" onclick="pick(this)"><span class="opt-label">A.</span><span class="opt-text">5</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">B.</span><span class="opt-text">4</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">C.</span><span class="opt-text">3</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">D.</span><span class="opt-text">2</span></div>
+    </div>
+  </div>
+  <hr class="md-hr">
+
+  <!-- Q5 -->
+  <div class="q-block">
+    <div class="md-h3"><span class="hash">###</span> Nomor 5 <span class="q-tag">SQL Query</span></div>
+    <div class="q-body">Rumah sakit memiliki tabel <strong>Pasien</strong>. Pilih query SQL untuk menemukan pasien yang:
+1. Keluhan: <strong>"Demam"</strong> atau <strong>"Sesak Napas"</strong>
+2. Status: <strong>"Rawat Inap"</strong>
+
+Tampilkan nama dan keluhan dari pasien yang memenuhi kedua kondisi tersebut.</div>
+    <div class="options">
+      <div class="option" onclick="pick(this)"><span class="opt-label">A.</span><span class="opt-text">SELECT nama, keluhan FROM Pasien
+WHERE keluhan IN ('Demam', 'Sesak Napas')
+AND status_rawat = 'Rawat Inap';</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">B.</span><span class="opt-text">SELECT nama, keluhan FROM Pasien
+WHERE keluhan = 'Demam' AND keluhan = 'Sesak Napas'
+AND status_rawat = 'Rawat Inap';</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">C.</span><span class="opt-text">SELECT nama, keluhan FROM Pasien
+WHERE keluhan IN ('Demam', 'Sesak Napas')
+AND status_rawat = 'Rawat Jalan';</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">D.</span><span class="opt-text">SELECT nama, keluhan FROM Pasien
+WHERE keluhan IN ('Demam', 'Sesak Napas')
+OR status_rawat = 'Rawat Inap';</span></div>
+    </div>
+  </div>
+  <hr class="md-hr">
+
+  <!-- Q6 -->
+  <div class="q-block">
+    <div class="md-h3"><span class="hash">###</span> Nomor 6 <span class="q-tag">SQL DDL</span></div>
+    <div class="q-body">Diketahui basis data <strong>rumahsakit</strong> yang di dalamnya terdapat tabel <strong>pasien</strong> beratribut nomor_rekam_medis, nama, dan alamat. Perintah SQL untuk menghapus tabel tersebut adalah…</div>
+    <div class="options">
+      <div class="option" onclick="pick(this)"><span class="opt-label">A.</span><span class="opt-text">DROP rumahsakit;</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">B.</span><span class="opt-text">DROP table nama;</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">C.</span><span class="opt-text">DROP pasien;</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">D.</span><span class="opt-text">DROP table pasien;</span></div>
+    </div>
+  </div>
+  <hr class="md-hr">
+
+  <!-- Q7 -->
+  <div class="q-block">
+    <div class="md-h3"><span class="hash">###</span> Nomor 7 <span class="q-tag">REST API</span></div>
+    <div class="q-body">Sistem rekam medis menyediakan endpoint REST API. Apa yang terjadi jika permintaan:</div>
+    <div class="code-block">GET /api/pasien/2   ← data tersedia</div>
+    <div class="q-body">dikirimkan ke server?</div>
+    <div class="options">
+      <div class="option" onclick="pick(this)"><span class="opt-label">A.</span><span class="opt-text">Server mengembalikan data pasien ID 2 dengan status kode 400</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">B.</span><span class="opt-text">Server mengembalikan data pasien ID 2 beserta informasinya dan status kode 200</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">C.</span><span class="opt-text">Server mengembalikan data kosong untuk ID 2 dengan status kode 200</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">D.</span><span class="opt-text">Server mengembalikan seluruh data pasien dengan status kode 200</span></div>
+    </div>
+  </div>
+  <hr class="md-hr">
+
+  <!-- Q8 -->
+  <div class="q-block">
+    <div class="md-h3"><span class="hash">###</span> Nomor 8 <span class="q-tag">CORS</span></div>
+    <div class="q-body">Aplikasi frontend di <code>http://frontend.domain.com</code> ingin mengakses API di <code>http://backend.domain.com</code>. Tanpa pengaturan CORS yang tepat, apa yang akan terjadi?</div>
+    <div class="options">
+      <div class="option" onclick="pick(this)"><span class="opt-label">A.</span><span class="opt-text">Permintaan berhasil tanpa masalah</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">B.</span><span class="opt-text">Aplikasi frontend menerima data dari API tanpa batasan</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">C.</span><span class="opt-text">Browser memblokir permintaan dan mengembalikan error bahwa akses lintas domain tidak diizinkan</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">D.</span><span class="opt-text">API menerima permintaan namun tidak memberikan respons</span></div>
+    </div>
+  </div>
+  <hr class="md-hr">
+
+  <!-- Q9 -->
+  <div class="q-block">
+    <div class="md-h3"><span class="hash">###</span> Nomor 9 <span class="q-tag">SQL Agregasi</span></div>
+    <div class="q-body">Rumah sakit ingin mengetahui jumlah pasien berdasarkan kelompok usia: <strong>10–20, 20–30, 30–40, dan lebih dari 40 tahun</strong>. Tabel: <strong>pasien</strong> (id_pasien, nama, usia).
+
+Query SQL yang paling tepat untuk menghasilkan satu baris ringkasan adalah…</div>
+    <div class="options">
+      <div class="option" onclick="pick(this)"><span class="opt-label">A.</span><span class="opt-text">SELECT
+  SUM(CASE WHEN umurdaftar>=10 AND umurdaftar<20 THEN 1 ELSE 0 END) AS usia_10_20,
+  SUM(CASE WHEN umurdaftar>=20 AND umurdaftar<30 THEN 1 ELSE 0 END) AS usia_20_30,
+  SUM(CASE WHEN umurdaftar>=30 AND umurdaftar<40 THEN 1 ELSE 0 END) AS usia_30_40,
+  SUM(CASE WHEN umurdaftar>=40 THEN 1 ELSE 0 END) AS lebih_dari_40
+FROM reg_periksa;</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">B.</span><span class="opt-text">SELECT COUNT(*) AS usia_10_20 FROM pasien WHERE usia>=10 AND usia<20;
+SELECT COUNT(*) AS usia_20_30 FROM pasien WHERE usia>=20 AND usia<30;
+SELECT COUNT(*) AS usia_30_40 FROM pasien WHERE usia>=30 AND usia<40;
+SELECT COUNT(*) AS lebih_dari_40 FROM pasien WHERE usia>=40;</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">C.</span><span class="opt-text">SELECT COUNT(*) AS lebih_dari_10 FROM pasien WHERE usia>=10;
+SELECT COUNT(*) AS lebih_dari_20 FROM pasien WHERE usia>=20;
+SELECT COUNT(*) AS lebih_dari_30 FROM pasien WHERE usia>=30;
+SELECT COUNT(*) AS lebih_dari_40 FROM pasien WHERE usia>=40;</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">D.</span><span class="opt-text">SELECT
+  COUNT(usia>=10 AND usia<20) AS usia_10_20,
+  COUNT(usia>=20 AND usia<30) AS usia_20_30,
+  COUNT(usia>=30 AND usia<40) AS usia_30_40,
+  COUNT(usia>=40) AS lebih_dari_40
+FROM pasien;</span></div>
+    </div>
+  </div>
+  <hr class="md-hr">
+
+  <!-- Q10 -->
+  <div class="q-block">
+    <div class="md-h3"><span class="hash">###</span> Nomor 10 <span class="q-tag">Git Init</span></div>
+    <div class="q-body">Pengembang ingin membuat repositori baru di Git untuk fitur manajemen rekam medis. Langkah <strong>pertama</strong> yang harus dilakukan adalah…</div>
+    <div class="options">
+      <div class="option" onclick="pick(this)"><span class="opt-label">A.</span><span class="opt-text">Menjalankan perintah git commit untuk memulai repositori baru</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">B.</span><span class="opt-text">Membuat direktori untuk proyek, kemudian menjalankan perintah git init</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">C.</span><span class="opt-text">Menambahkan file .gitignore dan melakukan commit pertama</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">D.</span><span class="opt-text">Mengunduh repositori dari server menggunakan perintah git clone</span></div>
+    </div>
+  </div>
+  <hr class="md-hr">
+
+  <!-- Q11 -->
+  <div class="q-block">
+    <div class="md-h3"><span class="hash">###</span> Nomor 11 <span class="q-tag">Git Merge</span></div>
+    <div class="q-body">Setelah fitur selesai dikerjakan pada cabang baru, bagaimana cara menggabungkan cabang tersebut ke cabang <strong>master</strong>?</div>
+    <div class="options">
+      <div class="option" onclick="pick(this)"><span class="opt-label">A.</span><span class="opt-text">Menggunakan perintah git pull</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">B.</span><span class="opt-text">Menggunakan perintah git merge</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">C.</span><span class="opt-text">Menggunakan perintah git commit</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">D.</span><span class="opt-text">Menggunakan perintah git config</span></div>
+    </div>
+  </div>
+  <hr class="md-hr">
+
+  <!-- Q12 -->
+  <div class="q-block">
+    <div class="md-h3"><span class="hash">###</span> Nomor 12 <span class="q-tag">ORM & N+1 Query</span></div>
+    <div class="q-body">Setelah aplikasi mengimplementasikan <strong>eager loading</strong> untuk mengatasi masalah N+1 query, apa yang seharusnya terjadi saat halaman daftar pasien dimuat?</div>
+    <div class="options">
+      <div class="option" onclick="pick(this)"><span class="opt-label">A.</span><span class="opt-text">Jumlah query tetap sama, tetapi eksekusinya lebih cepat</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">B.</span><span class="opt-text">Hanya akan ada satu query untuk mengambil semua data pasien dan dokter terkait</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">C.</span><span class="opt-text">Setiap query dieksekusi terpisah untuk pasien dan dokter, tetapi lebih cepat</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">D.</span><span class="opt-text">Setiap query membutuhkan lebih banyak waktu, tetapi tetap lebih sedikit dari sebelumnya</span></div>
+    </div>
+  </div>
+  <hr class="md-hr">
+
+  <!-- Q13 -->
+  <div class="q-block">
+    <div class="md-h3"><span class="hash">###</span> Nomor 13 <span class="q-tag">ON DELETE CASCADE</span></div>
+    <div class="q-body">Hubungan tabel <strong>pasien</strong> dan <strong>rekam_medis</strong> dikonfigurasi dengan <strong>ON DELETE CASCADE</strong>. Apa yang terjadi ketika data pasien dihapus?</div>
+    <div class="options">
+      <div class="option" onclick="pick(this)"><span class="opt-label">A.</span><span class="opt-text">Data pasien dihapus, tetapi rekam medis tetap ada</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">B.</span><span class="opt-text">Data pasien dan semua rekam medis terkait dihapus secara otomatis</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">C.</span><span class="opt-text">Data pasien dipindahkan ke tabel lain, rekam medis tetap ada</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">D.</span><span class="opt-text">Data pasien tidak bisa dihapus karena ada rekam medis terkait</span></div>
+    </div>
+  </div>
+  <hr class="md-hr">
+
+  <!-- Q14 -->
+  <div class="q-block">
+    <div class="md-h3"><span class="hash">###</span> Nomor 14 <span class="q-tag">ON DELETE RESTRICT</span></div>
+    <div class="q-body">Hubungan tabel <strong>pasien</strong> dan <strong>rekam_medis</strong> dikonfigurasi dengan <strong>ON DELETE RESTRICT</strong>. Apa yang terjadi saat dokter mencoba menghapus pasien yang memiliki rekam medis terkait?</div>
+    <div class="options">
+      <div class="option" onclick="pick(this)"><span class="opt-label">A.</span><span class="opt-text">Data pasien dihapus, rekam medis tetap ada</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">B.</span><span class="opt-text">Penghapusan pasien gagal karena rekam medis terkait masih ada</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">C.</span><span class="opt-text">Data pasien dipindahkan ke tabel rekam_medis</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">D.</span><span class="opt-text">Data pasien dihapus dan rekam medis dipindahkan ke tabel pasien</span></div>
+    </div>
+  </div>
+  <hr class="md-hr">
+
+  <!-- Q15 -->
+  <div class="q-block">
+    <div class="md-h3"><span class="hash">###</span> Nomor 15 <span class="q-tag">Boolean & NOT</span></div>
+    <div class="q-body">Perhatikan kode berikut:</div>
+    <div class="code-block">bool sudahKunjungi = false;
+sudahKunjungi = !sudahKunjungi;</div>
+    <div class="q-body">Nilai <strong>sudahKunjungi</strong> setelah kode dijalankan adalah…</div>
+    <div class="options">
+      <div class="option" onclick="pick(this)"><span class="opt-label">A.</span><span class="opt-text">true</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">B.</span><span class="opt-text">false</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">C.</span><span class="opt-text">null</span></div>
+      <div class="option" onclick="pick(this)"><span class="opt-label">D.</span><span class="opt-text">0</span></div>
+    </div>
+  </div>
+
+  <!-- SECTION II -->
+  <div class="md-h2"><span class="hash">##</span> Bagian II — Essay</div>
+
+  <!-- E16 -->
+  <div class="q-block">
+    <div class="md-h3"><span class="hash">###</span> Nomor 16 <span class="q-tag">SQL Essay</span></div>
+    <div class="q-body">Tabel: <strong>Negara</strong> (name, continent, area, population, gdp). <em>name</em> adalah kunci utama.
+
+Sebuah negara dianggap <strong>besar</strong> jika:
+— Luas wilayah ≥ 3.000.000 km², <strong>ATAU</strong>
+— Populasi ≥ 25.000.000
+
+Tulis query SQL untuk menampilkan <strong>name, population, dan area</strong> dari negara-negara besar tersebut.</div>
+    <div class="essay-label">Jawaban</div>
+    <textarea class="essay-box" placeholder="Ketik query SQL Anda di sini..."></textarea>
+  </div>
+  <hr class="md-hr">
+
+  <!-- E17 -->
+  <div class="q-block">
+    <div class="md-h3"><span class="hash">###</span> Nomor 17 <span class="q-tag">HTTP Methods</span></div>
+    <div class="q-body">Jelaskan metode-metode yang ada di <strong>HTTP</strong> beserta fungsinya, dan bagaimana masing-masing digunakan dalam sistem informasi rumah sakit.
+
+Petunjuk:
+• Sebutkan metode HTTP yang paling umum digunakan
+• Jelaskan secara singkat kegunaan masing-masing metode
+• Berikan contoh penerapan dalam konteks aplikasi rumah sakit</div>
+    <div class="essay-label">Jawaban</div>
+    <textarea class="essay-box" placeholder="Ketik jawaban Anda di sini..."></textarea>
+  </div>
+  <hr class="md-hr">
+
+  <!-- E18 -->
+  <div class="q-block">
+    <div class="md-h3"><span class="hash">###</span> Nomor 18 <span class="q-tag">Arsitektur MVC</span></div>
+    <div class="q-body">Jelaskan konsep <strong>MVC (Model-View-Controller)</strong> beserta peran masing-masing komponen dalam pengembangan aplikasi web.
+
+Gunakan konteks aplikasi rumah sakit sebagai ilustrasi penjelasan Anda.</div>
+    <div class="essay-label">Jawaban</div>
+    <textarea class="essay-box" placeholder="Ketik jawaban Anda di sini..."></textarea>
+  </div>
+  <hr class="md-hr">
+
+  <!-- E19 -->
+  <div class="q-block">
+    <div class="md-h3"><span class="hash">###</span> Nomor 19 <span class="q-tag">Lisensi Software</span></div>
+    <div class="q-body">Apa yang dimaksud dengan lisensi <strong>AGPL</strong> dan <strong>MIT</strong>?
+
+Jelaskan penerapannya dalam sebuah <em>library</em> proyek perangkat lunak.</div>
+    <div class="essay-label">Jawaban</div>
+    <textarea class="essay-box" placeholder="Ketik jawaban Anda di sini..."></textarea>
+  </div>
+  <hr class="md-hr">
+
+  <!-- E20 -->
+  <div class="q-block">
+    <div class="md-h3"><span class="hash">###</span> Nomor 20 <span class="q-tag">B-Tree Index</span></div>
+    <div class="q-body">Jelaskan konsep dasar <strong>B-Tree</strong> dalam <strong>MySQL/MariaDB</strong> sebagai indeks untuk kolom <em>primary key</em>.
+
+Bagaimana B-Tree dapat mempercepat pencarian data pasien dalam pengelolaan rekam medis?</div>
+    <div class="essay-label">Jawaban</div>
+    <textarea class="essay-box" placeholder="Ketik jawaban Anda di sini..."></textarea>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="doc-footer">
+    <p class="closing">Selamat Mengerjakan</p>
+    <p>RSU Aisyiyah Muntilan — Seleksi Programmer</p>
+  </div>
+
+</div>
+
+<script>
+  function pick(el) {
+    el.closest('.options').querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  // Prevent right-click
+  document.addEventListener('contextmenu', e => e.preventDefault());
+
+  // Scroll reveal
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.q-block').forEach(b => observer.observe(b));
+</script>
+</body>
+</html>
